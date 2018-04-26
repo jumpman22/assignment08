@@ -4,7 +4,7 @@
 var createSlideshow = function () {
     "use strict";
     // PRIVATE VARIABLES AND FUNCTIONS
-    var timer, play = true, nodes, img, stopSlideShow, displayNextImage, setPlayText;
+    var timer, play = true, nodes, img, stopSlideShow, displayNextImage, setPlayText, play_speed, defaultSpeed = 2000;
     
     nodes = { image: null, caption: null };
     img = { cache: [], counter: 0 };
@@ -41,13 +41,15 @@ var createSlideshow = function () {
             }
             return this;
         },
+        
         startSlideShow: function () {
             if (arguments.length === 2) {
                 nodes.image = arguments[0];
                 nodes.caption = arguments[1];
             }
-            timer = setInterval(displayNextImage, 2000);
+            timer = setInterval(displayNextImage, defaultSpeed);
             return this;
+            
         },
         createToggleHandler: function () {
             var me = this;
@@ -64,7 +66,16 @@ var createSlideshow = function () {
                 // TOGGLE PLAY 'FLAG'
                 play = !play;
             };
+        },
+        setInterval: function () {            
+            return function () {
+                if (play_speed) {
+                    play_speed = window.prompt("Current interval speed:  " + defaultSpeed + "ms. Enter new interval speed.");
+                } 
+                play_speed = !play_speed;
+            };
         }
+       
     };
 };
 
@@ -85,8 +96,9 @@ window.addEventListener("load", function () {
         {href: "images/punk.jpg", title: "He used to be in a punk band and toured with No Doubt and Sublime"},
         {href: "images/race.jpg", title: "He's active and loves obstacle coarse racing"}
     ];
-	// START THE SLIDESHOW
+    // START THE SLIDESHOW
     slideshow.loadImages(slides).startSlideShow($("image"), $("caption"));
     // PAUSE THE SLIDESHOW
     $("play_pause").onclick = slideshow.createToggleHandler();
+    $("play_speed").onclick = slideshow.setInterval();
 });
